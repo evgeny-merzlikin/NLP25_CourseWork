@@ -1,0 +1,12 @@
+pandoc
+streamlit
+langchain
+langchain_community
+langchain_core
+langchain_openai
+pypandoc
+python-dotenv
+openai
+uuid
+markdown
+tiktoken
