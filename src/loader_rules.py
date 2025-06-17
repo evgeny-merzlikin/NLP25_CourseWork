@@ -1,7 +1,8 @@
-import os
-import pypandoc
 import datetime
 from pathlib import Path
+
+from docling.document_converter import DocumentConverter
+
 from src.logger import logger
 from src.utils import calculate_file_hash
 
@@ -15,12 +16,7 @@ class RulesLoader:
 
     def __init__(self):
         logger.info("Инициализация RulesLoader")
-        # Автоматическая установка Pandoc, если не установлен
-        try:
-            pypandoc.get_pandoc_version()
-        except OSError:
-            logger.warning("Pandoc не найден. Устанавливаем...")
-            pypandoc.download_pandoc()
+        self.converter = DocumentConverter()
 
     def load_file(self, uploaded_file) -> dict:
         """
@@ -37,7 +33,8 @@ class RulesLoader:
             with open(temp_path, "wb") as f:
                 f.write(file_content)
 
-            output_md = pypandoc.convert_file(str(temp_path), to="markdown", format="docx" if file_ext in [".doc", ".docx"] else "pdf")
+            result = self.converter.convert(str(temp_path))
+            output_md = result.document.export_to_markdown()
             temp_path.unlink()
 
             file_hash = calculate_file_hash(output_md)
